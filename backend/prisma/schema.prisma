@@ -1,0 +1,141 @@
+// * generator client - настройка генерации Prisma Client
+generator client {
+  provider = "prisma-client-js" // * Генерирует клиент на JavaScript/TypeScript
+}
+
+// * datasource db - настройка подключения к базе данных
+datasource db {
+  provider = "postgresql"      // * Тип БД: PostgreSQL
+  url      = env("DATABASE_URL") // * URL берется из переменной окружения
+}
+
+model User {
+  id        String   @id @default(cuid())      // * Уникальный ID с автоматической генерацией cuid()
+  email     String                             // * Email пользователя (обязательный)
+  username  String   @unique                   // * Уникальное имя пользователя
+  password  String                             // * Пароль (хешированный)
+  bio       String?                            // * Биография (опционально)
+  avatar    String?                            // * URL аватарки (опционально)
+  createAt  DateTime @default(now())           // * Дата создания с автоустановкой текущего времени
+  updatedAt DateTime @updatedAt                // * Дата обновления (автообновление при изменениях)
+
+  Post      Post[]                             // * Связь один-ко-многим с постами (виртуальное поле)
+  Comment Comment[]
+  stories   Story[]
+  
+   @@map("users")
+}
+
+model Post {
+  id        String    @id @default(cuid())     // * Уникальный ID поста
+  title     String?                            // * Заголовок поста (опционально)
+  content   String?                            // * Содержание поста (опционально)
+  published Boolean   @default(false)          // * Статус публикации (по умолчанию false)
+  dueDate   DateTime?                          // * Дата выполнения/дедлайн (опционально)
+  authorID  String                             // * Внешний ключ на пользователя
+  createdAt DateTime  @default(now())          // * Дата создания поста
+  updatedAt DateTime  @updatedAt               // * Дата последнего обновления
+  author    User      @relation(fields: [authorID], references: [id], onDelete: Cascade) // * Связь с пользователем
+  image     String?                            // * URL изображения поста (опционально)
+
+  Comment Comment[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  text      String
+  postId    String
+  authorId  String
+  createdAt DateTime @default(now())
+  
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User   @relation(fields: [authorId], references: [id])
+  
+  @@map("comments")
+}
+
+// ============================================
+// МОДЕЛЬ ИСТОРИЙ (STORIES)
+// ============================================
+// Модель Story представляет временные истории пользователей (аналог Instagram Stories)
+// Каждая история - это фото, доступное 24 часа с момента публикации
+
+model Story {
+  // -------------------------------------------
+  // ПОЛЕ ID - Уникальный идентификатор
+  // -------------------------------------------
+  
+  // id        - имя поля в базе данных (camelCase в Prisma, snake_case в БД)
+  // String    - тип данных: строка (UUID формат)
+  // @id       - ДЕКОРАТОР: помечает поле как PRIMARY KEY (первичный ключ)
+  //             Первичный ключ уникально идентифицирует каждую запись в таблице
+  //* @default() - ДЕКОРАТОР: задает значение по умолчанию при создании записи
+  //* uuid()    - ВСТРОЕННАЯ ФУНКЦИЯ: генерирует UUID v4 (универсальный уникальный идентификатор)
+  //             Пример: "550e8400-e29b-41d4-a716-446655440000"
+  id        String   @id @default(uuid())
+
+  // -------------------------------------------
+  // ПОЛЕ IMAGE - URL изображения
+  // -------------------------------------------
+  
+  // image     - имя поля, хранит ссылку на картинку истории
+  // String    - тип данных: строка (URL хранится как текст)
+  // Нет @default - поле ОБЯЗАТЕЛЬНО для заполнения (не может быть null)
+  // Пример значения: "https://cdn.example.com/stories/photo.jpg"
+  image     String   // URL картинки
+
+  // -------------------------------------------
+  // ПОЛЕ CREATEDAT - Время создания
+  // -------------------------------------------
+  
+  // createdAt - имя поля, стандартное название для timestamp создания
+  // DateTime  - тип данных: дата и время (в PostgreSQL: TIMESTAMP WITH TIME ZONE)
+  //* @default(now()) - ДЕКОРАТОР: автоматически ставит текущее время при создании
+  //* now()     - ВСТРОЕННАЯ ФУНКЦИЯ: возвращает текущую дату/время сервера БД
+  createdAt DateTime @default(now())
+
+  // -------------------------------------------
+  // ПОЛЕ EXPIRESAT - Время истечения (24 часа)
+  // -------------------------------------------
+  
+  //* expiresAt - имя поля, когда история "протухнет" и станет невидимой
+  // DateTime  - тип данных: дата и время
+  // Нет @default - значение будет вычислено в коде (createdAt + 24 часа)
+  // Используется для фильтрации активных историй: WHERE expiresAt > NOW()
+  expiresAt DateTime // createdAt + 24 часа
+
+  // -------------------------------------------
+  // ПОЛЕ USERID - Внешний ключ (Foreign Key)
+  // -------------------------------------------
+  
+  // userId    - имя поля, хранит ID автора истории (соглашение: [relation]Id)
+  // String    - тип данных: строка (UUID пользователя)
+  // Нет @default - обязательное поле, должно быть заполнено при создании
+  // Это FOREIGN KEY - ссылка на поле id в таблице User
+  userId    String
+
+  // -------------------------------------------
+  // ПОЛЕ USER - Реляционная связь (Relation)
+  // -------------------------------------------
+  
+  // user      - имя поля в JAVASCRIPT/OBJECT (не в БД!)
+  // User      - ТИП МОДЕЛИ: ссылается на модель User (должна быть определена в схеме)
+  // @relation - ДЕКОРАТОР: определяет связь между таблицами (отношение)
+  //   fields: [userId]   - ЛОКАЛЬНОЕ ПОЛЕ: внешний ключ в текущей таблице (Story)
+  //   references: [id]   - УДАЛЕННОЕ ПОЛЕ: поле в целевой таблице (User.id)
+  //   onDelete: Cascade  - ПОВЕДЕНИЕ ПРИ УДАЛЕНИИ:
+  //                        Cascade = при удалении пользователя удалить все его истории
+  //                        Другие варианты: Restrict (запретить), SetNull (обнулить)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // ============================================
+  // ИНДЕКСЫ (Indexes) - Для быстрого поиска
+  // ============================================
+  
+  //* @@index() - ДЕКОРАТОР МОДЕЛИ: создает составной индекс в БД
+  // [userId, expiresAt] - ПОЛЯ ИНДЕКСА: порядок важен!
+  //   1. userId первый - быстрый поиск историй конкретного пользователя
+  //   2. expiresAt второй - быстрая фильтрация по времени (active stories)
+  // Этот индекс ускоряет запрос: WHERE userId = X AND expiresAt > now()
+  @@index([userId, expiresAt])
+}
