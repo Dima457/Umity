@@ -10,9 +10,7 @@ import {Controller, Post, Get, Body,Request, Param, Delete } from "@nestjs/commo
     @Post()
     @UseGuards(JwtAuthGuard)
     async createPost(@Body() data:any, @Request() req){
-        console.log('🔐 Headers:', req.headers.authorization);
-        console.log('👤 User object:', req.user);
-        console.log('request user', req.user)
+       
         return this.postService.createPost({
             ...data,
             authorID:req.user.userId, //*из jwt токена

@@ -9,15 +9,16 @@ import { PostService } from 'src/posts/post.service';
 import { CommentsService } from 'src/comments/comments.service';
 import { PrismaService } from 'src/prisma/prisma.service'; // Правильный импорт
 import { StoriesModule } from 'src/stories/stories.module';
-import { StoriesController } from 'src/stories/stories.controller';
-import { StoriesService } from 'src/stories/stories.service';
+
+import { LikesModul } from 'src/likes/likes.module';
 @Module({
   imports: [
     
     AuthModule,
     UserModule,
-    PostModule, //* Добавляем UserModule в imports
-    StoriesModule
+    PostModule, 
+    StoriesModule,
+    LikesModul
   ],
    controllers: [PostController, CommentsController], // ← CommentsController должен быть тут
   providers: [PostService, CommentsService,PrismaService],
