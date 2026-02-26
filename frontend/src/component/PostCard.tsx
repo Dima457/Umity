@@ -1,8 +1,8 @@
 'use client'
 //* и без подробних коментов я знаю все здесь
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import CommentModal from './CommentModal';
-
+import { likesApI } from '@/lib/api';
 
 export interface Post {
   id: string;
@@ -15,20 +15,30 @@ export interface Post {
     username: string;
     avatar?: string;
   };
+  likesCount: number;      
+  isLikedByMe: boolean;    
 }
 
 interface PostCardProps {
   post: Post;
-  onDelete?: (postId: string) => void; // ← Добавляем callback для удаления
+  onDelete?: (postId: string) => void; 
   showDeleteButton?: boolean;
-  onUserClick?: (userId:string)=>void // ← Показывать ли кнопку удаления
+  onUserClick?: (userId:string)=>void 
 }
-
+ 
 export default function PostCard({ post ,onDelete,showDeleteButton=false,onUserClick }: PostCardProps) {
-  const [likes, setLikes] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
+  
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [showDeleteBtn, setShowDeleteBtn] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likesCount);
+  const [isLiked, setIsLiked] = useState(post.isLikedByMe);
+
+
+  //useEffect(() => {
+ // setLikesCount(post.likesCount);
+ // setIsLiked(post.isLikedByMe);
+//}, [post.likesCount, post.isLikedByMe]);
+
 
   const handleDelete= ()=>{
     if(onDelete){
@@ -36,9 +46,24 @@ export default function PostCard({ post ,onDelete,showDeleteButton=false,onUserC
     }
   }
 
-  const handleLike = () => {
-    setLikes(isLiked ? likes - 1 : likes + 1);
-    setIsLiked(!isLiked);
+  const handleLike = async () => {
+    const oldIsLiked = isLiked;
+    const oldLikesCount = likesCount;
+
+    setIsLiked(!oldIsLiked);
+    setLikesCount(oldIsLiked?oldLikesCount-1:oldLikesCount+1);
+
+    try{
+      if(oldIsLiked){
+        await likesApI.unlikePost(post.id);
+      }else{
+        await likesApI.likesPost(post.id);
+      }
+    }catch(error){
+      setIsLiked(oldIsLiked);
+      setLikesCount(oldLikesCount);
+      console.error('Ошибка:', error);
+    }
   };
   const handleUserProfileClick = ()=>{
     if(onUserClick){
@@ -132,7 +157,7 @@ export default function PostCard({ post ,onDelete,showDeleteButton=false,onUserC
             <span className={`text-lg ${isLiked ? 'text-red-500' : 'text-gray-400'}`}>
               {isLiked ? '❤️' : '🤍'}
             </span>
-            <span className="text-sm font-medium">{likes}</span>
+            <span className="text-sm font-medium">{likesCount}</span>
           </button>
           
           {/* 🔥 ОБНОВЛЕННАЯ кнопка комментариев */}

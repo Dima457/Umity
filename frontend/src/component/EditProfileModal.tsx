@@ -37,7 +37,7 @@ return (
         
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Аватарка (URL)</label>
+            <label className="block text-sm font-medium mb-2">Аватарка </label>
             <input
               type="text"
               value={avatar}

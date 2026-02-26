@@ -51,21 +51,41 @@ export class PostService{
              });
         }
 
-        async getAllPosts(){
-            return this.prisma.post.findMany({
-                orderBy:{createdAt:'desc'},
-                include:{
-                    author:{
-                        select:{
-                            id:true,
-                            username:true,
-                            avatar:true,
-                            bio:true
-                        }
-                    }
+        async getAllPosts(userId?: string) {
+    const posts = await this.prisma.post.findMany({
+        orderBy: { createdAt: 'desc' },
+        include: {
+            author: {
+                select: {
+                    id: true,
+                    username: true,
+                    avatar: true
                 }
-            });
- 
+            },
+            _count: {
+                select: { likes: true }
+            },
+            // Условно добавляем likes только если есть userId
+            ...(userId && {
+                likes: {
+                    where: { userId },
+                    take: 1
+                }
+            })
         }
+    });
+
+    // Преобразуем в удобный формат для фронтенда
+    return posts.map(post => ({
+        id: post.id,
+        title: post.title,
+        content: post.content,
+        image: post.image,
+        createdAt: post.createdAt,
+        author: post.author,
+        likesCount: post._count.likes,
+        isLikedByMe: userId ? post.likes.length > 0 : false
+    }));
+}
 
 }

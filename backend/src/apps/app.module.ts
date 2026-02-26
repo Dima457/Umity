@@ -9,7 +9,7 @@ import { PostService } from 'src/posts/post.service';
 import { CommentsService } from 'src/comments/comments.service';
 import { PrismaService } from 'src/prisma/prisma.service'; // Правильный импорт
 import { StoriesModule } from 'src/stories/stories.module';
-
+import { LikesController } from 'src/likes/likes.controller';
 import { LikesModul } from 'src/likes/likes.module';
 @Module({
   imports: [

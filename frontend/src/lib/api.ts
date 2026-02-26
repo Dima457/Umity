@@ -154,10 +154,7 @@ export const storiesAPI = {
       throw new Error('Network error: failed to read response');
     }
 
-    console.log('Response status:', r.status, r.statusText);
-    console.log('Response headers:', [...r.headers.entries()]);
-    console.log('Response body:', text);
-
+    
     if (!r.ok) {
       let errorMessage = `HTTP ${r.status}: ${r.statusText}`;
       try {
@@ -171,7 +168,7 @@ export const storiesAPI = {
 
     // Если успех но пустое тело
     if (!text || text.trim() === '') {
-      console.warn('Empty response body on success');
+      
       return null;
     }
 
@@ -179,8 +176,41 @@ export const storiesAPI = {
     try {
       return JSON.parse(text);
     } catch (e) {
-      console.error('JSON parse error:', e);
+      
       throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
     }
   }),
+};
+
+//Likes API
+
+export const likesApI = {
+  likesPost:async(postId:string)=>{
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/posts/${postId}/like`, {
+      method:'POST',
+      headers:{
+         'Authorization': `Bearer ${token}`,
+      }
+    } )
+    if(!response.ok){
+      throw new Error('Ошибка при лайке');
+
+    }
+    return response.json();
+  },
+
+  unlikePost:async (postId:string)=>{
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/posts/${postId}/like`,{
+      method:'DELETE',
+      headers:{
+        'Authorization': `Bearer ${token}`,
+      }
+    })
+    if(!response.ok){
+      throw new Error('Ошибка при снятии лайка')
+    }
+    return response.json();
+  }
 };
