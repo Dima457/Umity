@@ -1,7 +1,7 @@
 // components/CommentModal.tsx
 'use client';
 
-import { useState, useEffect, SetStateAction } from 'react';
+import { useState, useEffect } from 'react';
 import { API_BASE_URL } from '@/lib/api';
 import { LikesAPIComment } from '@/lib/api';
 
@@ -17,9 +17,7 @@ interface Comment {
   isLikedByMe: boolean;    
 }
 
-
 interface CommentModalProps {
-  
   isOpen: boolean;
   onClose: () => void;
   postId: string;
@@ -30,33 +28,31 @@ export default function CommentModal({ isOpen, onClose, postId, postAuthor }: Co
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
-  
 
-  const handleLikeComment = async (commentId:string, index:number) => {
-      const comment = comments[index];
-      const oldIsLiked = comment.isLikedByMe;
-      const oldLikesCount = comment.likesCount;
+  const handleLikeComment = async (commentId: string, index: number) => {
+    const comment = comments[index];
+    const oldIsLiked = comment.isLikedByMe;
+    const oldLikesCount = comment.likesCount;
 
-      const updatedComments = [...comments];  // копия массива
-updatedComments[index] = {              // замена по индексу
-    ...comment,                          // копия старого коммента
-    isLikedByMe: !oldIsLiked,            // новое значение
-    likesCount: oldIsLiked ? oldLikesCount - 1 : oldLikesCount + 1  // новое значение
-};
-setComments(updatedComments);
-      try{
-        if(oldIsLiked){
-          await LikesAPIComment.unLikeComment(commentId);
-        }else{
-          await LikesAPIComment.LikeComment(commentId);
-        }
-      }catch(error){
-        setComments(comments);
-        console.error('Ошибка:', error);
-      }
+    const updatedComments = [...comments];
+    updatedComments[index] = {
+      ...comment,
+      isLikedByMe: !oldIsLiked,
+      likesCount: oldIsLiked ? oldLikesCount - 1 : oldLikesCount + 1
     };
-
-  //const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
+    setComments(updatedComments);
+    
+    try {
+      if (oldIsLiked) {
+        await LikesAPIComment.unLikeComment(commentId);
+      } else {
+        await LikesAPIComment.LikeComment(commentId);
+      }
+    } catch (error) {
+      setComments(comments);
+      console.error('Ошибка:', error);
+    }
+  };
 
   const fetchComments = async () => {
     try {
@@ -93,12 +89,33 @@ setComments(updatedComments);
 
       if (response.ok) {
         setNewComment('');
-        fetchComments(); // Обновляем комментарии
+        fetchComments();
       }
     } catch (error) {
       console.error('Error adding comment:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteComment = async (commentId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments/${commentId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+      
+      if (response.ok) {
+        setComments(comments.filter(comment => comment.id !== commentId));
+      } else {
+        alert('Ошибка при удалении комментария');
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      alert('Ошибка при удалении комментария');
     }
   };
 
@@ -118,62 +135,50 @@ setComments(updatedComments);
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">✕</button>
         </div>
         
-        {/* Список комментариев */}
         <div className="space-y-4 mb-4">
-         {comments.map((comment,index) => (
-  <div key={comment.id} className="border-b pb-3">
-    <div className="flex justify-between items-start mb-1">
-      <span className="font-medium">@{comment.author.username}</span>
-      <span className="text-xs text-gray-500">
-        {new Date(comment.createdAt).toLocaleDateString()}
-      </span>
-    </div>
-    <p className="text-gray-700">{comment.text}</p>
-    
-    {/* Блок лайков и удаления */}
-    <div className="flex items-center justify-between mt-2">
-      <div className="flex items-center space-x-2">
-        <button onClick={() => handleLikeComment(comment.id, index)}>
-    {comment.isLikedByMe ? '❤️' : '🤍'}
-  
-  
-          
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
-            />
-          
-        </button>
-        <span className="text-sm text-gray-600">{comment.likesCount}</span>
-      </div>
-      
-      <button 
-        className="text-gray-400 hover:text-red-600 transition-colors"
-        title="Удалить комментарий"
-      >
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          className="h-4 w-4" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke="currentColor"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
-          />
-        </svg>
-      </button>
-    </div>
-  </div>
-))}
+          {comments.map((comment, index) => (
+            <div key={comment.id} className="border-b pb-3">
+              <div className="flex justify-between items-start mb-1">
+                <span className="font-medium">@{comment.author.username}</span>
+                <span className="text-xs text-gray-500">
+                  {new Date(comment.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <p className="text-gray-700">{comment.text}</p>
+              
+              <div className="flex items-center justify-between mt-2">
+                <div className="flex items-center space-x-2">
+                  <button onClick={() => handleLikeComment(comment.id, index)}>
+                    {comment.isLikedByMe ? '❤️' : '🤍'}
+                  </button>
+                  <span className="text-sm text-gray-600">{comment.likesCount}</span>
+                </div>
+                
+                <button 
+                  onClick={() => deleteComment(comment.id)}
+                  className="text-gray-400 hover:text-red-600 transition-colors"
+                  title="Удалить комментарий"
+                >
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-4 w-4" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Форма добавления комментария */}
         <div className="flex space-x-2">
           <input
             type="text"
