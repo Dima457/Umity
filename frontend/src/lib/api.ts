@@ -187,7 +187,7 @@ export const storiesAPI = {
 export const likesApI = {
   likesPost:async(postId:string)=>{
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/posts/${postId}/like`, {
+    const response = await fetch(`${API_BASE_URL}/posts/${postId}/likes`, {
       method:'POST',
       headers:{
          'Authorization': `Bearer ${token}`,
@@ -202,7 +202,7 @@ export const likesApI = {
 
   unlikePost:async (postId:string)=>{
     const token = localStorage.getItem('token');
-    const response = await fetch(`${API_BASE_URL}/posts/${postId}/like`,{
+    const response = await fetch(`${API_BASE_URL}/posts/${postId}/likes`,{
       method:'DELETE',
       headers:{
         'Authorization': `Bearer ${token}`,
@@ -213,4 +213,45 @@ export const likesApI = {
     }
     return response.json();
   }
+
+  
 };
+
+//Likes API comment 
+
+  export const LikesAPIComment ={
+    LikeComment: async ( commentId:string)=>{
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/comments/${commentId}/likes`,{
+        method:'POST',
+        headers:{
+         'Authorization': `Bearer ${token}`,
+        }
+      })
+      if(!response.ok){
+        throw new Error('Ошибка при постановке лайка')
+      }
+      return response.json();
+    },
+    unLikeComment: async(commentId:string)=>{
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/comments/${commentId}/likes`,{
+        method:'DELETE',
+        headers:{
+           'Authorization': `Bearer ${token}`,
+        }
+      })
+      if(!response.ok){
+        throw new Error('Ошибка при снятии лайка')
+      }
+      return response.json();
+    },
+
+    getLikesCount: async (commentId: string) => {
+    const response = await fetch(`${API_BASE_URL}/comments/${commentId}/likes`);
+    if (!response.ok) {
+      throw new Error('Ошибка при получении лайков');
+    }
+    return response.json();
+  }
+  }

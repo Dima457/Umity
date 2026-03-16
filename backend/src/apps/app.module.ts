@@ -20,7 +20,7 @@ import { LikesModul } from 'src/likes/likes.module';
     StoriesModule,
     LikesModul
   ],
-   controllers: [PostController, CommentsController], // ← CommentsController должен быть тут
+   controllers: [PostController, CommentsController],
   providers: [PostService, CommentsService,PrismaService],
 })
-export class AppModule {} // Исправлено: правильный синтаксис класса
+export class AppModule {} 

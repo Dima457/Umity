@@ -56,5 +56,49 @@ async unlikePost(postId: string, userId: string){
     
     
 }
+
+// лайки на комменты 
+async getLikeCommentCount( commentId:string){
+    return this.prisma.like.count({where: { commentId }} )
+}
+
+async isLikeByUserComment(commentId:string, userId:string){
+    const likeComment = await this.prisma.like.findFirst({
+        where:{
+            commentId:commentId,
+            userId:userId
+        }
+    })
+    return !!likeComment
+}
+
+async likeComment(commentId:string, userId:string){
+    const comment = await this.prisma.comment.findFirst({where:{id:commentId}})
+    if(!comment) throw new NotFoundException('Comment not found');
+
+    const existingCommentLike = await this.prisma.like.findFirst({
+        where:{
+            commentId,
+            userId
+        }
+    })
+    if(existingCommentLike){
+        return existingCommentLike;
+    }
+    return this.prisma.like.create({
+        data:{
+            commentId:commentId,
+            userId:userId
+        }
+    })
+}
+async unLikeComment(commentId:string, userId:string){
+    const ourLikeComment = await this.prisma.like.findFirst({where:{commentId,userId}});
+    if(!ourLikeComment) throw new NotFoundException('Like is not found');
+
+    return this.prisma.like.delete({where:{id:ourLikeComment.id}})
+
+}
+
 }
 

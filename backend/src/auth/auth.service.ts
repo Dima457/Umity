@@ -1,14 +1,7 @@
-/// *Импортируем декоратор Injectable из NestJS
-// *Позволяет классу быть управляемым dependency injection system
 import { Injectable } from '@nestjs/common';
-
-// *Импортируем JwtService для работы с JWT токенами
 import { JwtService } from '@nestjs/jwt';
-
 // *Импортируем bcrypt для хеширования паролей
 import * as bcrypt from 'bcrypt';
-
-// *Импортируем UserService для работы с пользователями в БД
 import { UserService } from '../user/user.service';
 
 // *Декоратор @Injectable отмечает класс как провайдер
@@ -25,14 +18,12 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<any> {
     // *Ищем пользователя по email в базе данных
     const user = await this.userService.findByEmail(email);
-    
     // *Если пользователь найден и пароль совпадает
     if (user && await bcrypt.compare(password, user.password)) {
       // *Удаляем пароль из объекта пользователя (для безопасности)
       const { password, ...result } = user; // *destructuring assignment
       return result; // *Возвращаем пользователя без пароля
     }
-    
     // *Если аутентификация не удалась
     return null;
   }
@@ -50,7 +41,7 @@ export class AuthService {
     // *sign метод автоматически добавляет iat (issued at) и exp (expiration)
     return {
       access_token: this.jwtService.sign(payload), //* JWT токен
-      user: { // *Данные пользователя для фронтенда
+      user: { 
         id: user.id,
         email: user.email,
         username: user.username,

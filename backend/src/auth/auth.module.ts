@@ -19,8 +19,7 @@ import { JwtStrategy } from './jwt.strategy';// *Импортируем UserModu
   ],
   controllers: [AuthController], // *Контроллер обработки запросов аутентификации
   providers: [AuthService,JwtStrategy], // *Сервис аутентификации (логика входа/регистрации)
-  // *Убираем UserService и PrismaService отсюда - они теперь предоставляются 
-  // *через UserModule, что следует принципу инкапсуляции модулей NestJS
+  // *Убираем UserService и PrismaService отсюда - они теперь предоставляются через UserModule, что следует принципу инкапсуляции модулей NestJS
   // *Это улучшает архитектуру и избегает циклических зависимостей
 })
 export class AuthModule {}

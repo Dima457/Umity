@@ -34,10 +34,11 @@ export default function PostCard({ post ,onDelete,showDeleteButton=false,onUserC
   const [isLiked, setIsLiked] = useState(post.isLikedByMe);
 
 
-  //useEffect(() => {
- // setLikesCount(post.likesCount);
- // setIsLiked(post.isLikedByMe);
-//}, [post.likesCount, post.isLikedByMe]);
+  useEffect(() => {
+  setLikesCount(post.likesCount);
+  setIsLiked(post.isLikedByMe);
+  },[post.likesCount, post.isLikedByMe]);
+  
 
 
   const handleDelete= ()=>{
@@ -177,8 +178,7 @@ export default function PostCard({ post ,onDelete,showDeleteButton=false,onUserC
       <CommentModal
         isOpen={isCommentModalOpen}
         onClose={() => setIsCommentModalOpen(false)}
-        postId={post.id}
-        postAuthor={post.author.username}
+        postId={post.id} postAuthor={''}                
       />
         
       </div>

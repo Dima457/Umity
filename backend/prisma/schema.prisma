@@ -52,46 +52,32 @@ model Comment {
   
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   author User   @relation(fields: [authorId], references: [id])
+  likes Like[]
   
   @@map("comments")
 }
 
-// ============================================
-// МОДЕЛЬ ИСТОРИЙ (STORIES)
-// ============================================
-// Модель Story представляет временные истории пользователей (аналог Instagram Stories)
-// Каждая история - это фото, доступное 24 часа с момента публикации
+
 
 model Story {
-  // -------------------------------------------
-  // ПОЛЕ ID - Уникальный идентификатор
-  // -------------------------------------------
+ 
   
-  // id        - имя поля в базе данных (camelCase в Prisma, snake_case в БД)
-  // String    - тип данных: строка (UUID формат)
-  // @id       - ДЕКОРАТОР: помечает поле как PRIMARY KEY (первичный ключ)
-  //             Первичный ключ уникально идентифицирует каждую запись в таблице
+  
+  //* @id       - ДЕКОРАТОР: помечает поле как PRIMARY KEY (первичный ключ) Первичный ключ уникально идентифицирует каждую запись в таблице
   //* @default() - ДЕКОРАТОР: задает значение по умолчанию при создании записи
   //* uuid()    - ВСТРОЕННАЯ ФУНКЦИЯ: генерирует UUID v4 (универсальный уникальный идентификатор)
   //             Пример: "550e8400-e29b-41d4-a716-446655440000"
   id        String   @id @default(uuid())
 
-  // -------------------------------------------
-  // ПОЛЕ IMAGE - URL изображения
-  // -------------------------------------------
   
-  // image     - имя поля, хранит ссылку на картинку истории
-  // String    - тип данных: строка (URL хранится как текст)
-  // Нет @default - поле ОБЯЗАТЕЛЬНО для заполнения (не может быть null)
-  // Пример значения: "https://cdn.example.com/stories/photo.jpg"
-  image     String   // URL картинки
+  // *Нет @default - поле ОБЯЗАТЕЛЬНО для заполнения (не может быть null)
+  
+  image     String  
 
-  // -------------------------------------------
-  // ПОЛЕ CREATEDAT - Время создания
-  // -------------------------------------------
   
-  // createdAt - имя поля, стандартное название для timestamp создания
-  // DateTime  - тип данных: дата и время (в PostgreSQL: TIMESTAMP WITH TIME ZONE)
+  
+  //* createdAt - имя поля, стандартное название для timestamp создания
+  //* DateTime  - тип данных: дата и время (в PostgreSQL: TIMESTAMP WITH TIME ZONE)
   //* @default(now()) - ДЕКОРАТОР: автоматически ставит текущее время при создании
   //* now()     - ВСТРОЕННАЯ ФУНКЦИЯ: возвращает текущую дату/время сервера БД
   createdAt DateTime @default(now())
@@ -146,12 +132,15 @@ model Like {
   id  String @id @default(uuid())
 
   userId    String   
-  postId    String 
+  postId    String?
+  commentId String?
   createdAt DateTime @default(now())
   
   liker User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  likeObj Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  likeObj Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment Comment? @relation(fields: [commentId], references: [id],onDelete: Cascade)
  
   @@unique([userId,postId])
+  @@unique([userId,commentId])
   @@map("likes")
 }

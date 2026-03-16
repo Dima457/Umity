@@ -5,8 +5,8 @@ import { CommentsController } from './comments.controller';
 import { PrismaService } from '../prisma/prisma.service';
  
 @Module({
-  controllers: [CommentsController], //* Добавляем контроллер пользователя
-  providers: [CommentsService, PrismaService], //* Регистрируем сервисы
-  exports: [CommentsService], //* Экспортируем PostService для использования в других модулях
+  controllers: [CommentsController], 
+  providers: [CommentsService, PrismaService], 
+  exports: [CommentsService], 
 })
 export class CommentModule {}

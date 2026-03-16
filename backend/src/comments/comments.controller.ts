@@ -4,11 +4,11 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CommentsService } from './comments.service';
 
 @Controller('posts/:postId/comments')
-export class CommentsController { // ← исправил на CommentsController
+export class CommentsController { 
     constructor(private commentsService: CommentsService) {}
     
     @Get()
-    async getComments(@Param('postId') postId: string) { // ← исправил скобку
+    async getComments(@Param('postId') postId: string) { 
         return this.commentsService.getComments(postId);
     }
     
@@ -17,9 +17,9 @@ export class CommentsController { // ← исправил на CommentsControlle
     async createComment(
         @Param('postId') postId: string,
         @Body() body: { text: string },
-        @Request() req // ← добавил скобку
+        @Request() req 
     ) {
-        return this.commentsService.createComment(postId, body.text, req.user.userId); // ← исправил параметры
+        return this.commentsService.createComment(postId, body.text, req.user.userId); 
     }
     
     @Delete(':commentId')
