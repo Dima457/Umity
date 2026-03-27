@@ -71,7 +71,7 @@ export default function PostCard({ post, onDelete, showDeleteButton = false, onU
   };
 
   return (
-    <div className="group bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow duration-300 w-full max-w-md mx-auto relative">
+    <div className="group bg-white rounded-xl shadow-md border border-[#E5E5E5] overflow-hidden hover:shadow-lg hover:border-[#D85D3F]/30 transition-all duration-300 w-full max-w-md mx-auto relative">
       
       {showDeleteButton && (
         <div 
@@ -82,7 +82,7 @@ export default function PostCard({ post, onDelete, showDeleteButton = false, onU
         >
           <button 
             onClick={handleDelete}
-            className={`bg-black bg-opacity-50 text-white w-8 h-8 rounded-full transition-all duration-200 flex items-center justify-center ${
+            className={`bg-[#2D2D2D] bg-opacity-70 hover:bg-[#D85D3F] text-white w-8 h-8 rounded-full transition-all duration-200 flex items-center justify-center ${
               showDeleteBtn ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'
             }`}
             title="Удалить пост"
@@ -102,13 +102,13 @@ export default function PostCard({ post, onDelete, showDeleteButton = false, onU
       
       <div className="p-6">
         {post.title && (
-          <h3 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
+          <h3 className="text-xl font-semibold text-[#2D2D2D] mb-3 line-clamp-2">
             {post.title}
           </h3>
         )}
         
         {post.content && (
-          <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+          <p className="text-[#6B6B6B] mb-4 line-clamp-3 leading-relaxed">
             {post.content}
           </p>
         )}
@@ -122,35 +122,35 @@ export default function PostCard({ post, onDelete, showDeleteButton = false, onU
               <img 
                 src={post.author.avatar} 
                 alt={post.author.username}
-                className="w-8 h-8 rounded-full object-cover"
+                className="w-8 h-8 rounded-full object-cover ring-2 ring-[#E5E5E5]"
               />
             ) : (
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-[#D85D3F] to-[#E87A5F] rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-medium">
                   {post.author.username.charAt(0).toUpperCase()}
                 </span>
               </div>
             )}
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-[#2D2D2D]">
               @{post.author.username}
             </span>
           </div>
           
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-[#9B9B9B]">
             {new Date(post.createdAt).toLocaleDateString('ru-RU')}
           </span>
         </div>
         
-        <div className="flex items-center space-x-4 pt-4 border-t border-gray-100">
+        <div className="flex items-center space-x-4 pt-4 border-t border-[#E5E5E5]">
           <button 
             onClick={handleLike}
             className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-200 ${
               isLiked 
-                ? 'bg-red-50 text-red-600 border border-red-200' 
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                ? 'bg-[#FEF2F0] text-[#D85D3F] border border-[#D85D3F]' 
+                : 'bg-[#F5F5F5] text-[#6B6B6B] hover:bg-[#EBEBEB] hover:text-[#D85D3F]'
             }`}
           >
-            <span className={`text-lg ${isLiked ? 'text-red-500' : 'text-gray-400'}`}>
+            <span className={`text-lg ${isLiked ? 'text-[#D85D3F]' : 'text-[#9B9B9B]'}`}>
               {isLiked ? '❤️' : '🤍'}
             </span>
             <span className="text-sm font-medium">{likesCount}</span>
@@ -161,7 +161,7 @@ export default function PostCard({ post, onDelete, showDeleteButton = false, onU
               console.log('open comments for post', post.id);  
               setIsCommentModalOpen(true);
             }}
-            className="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors duration-200"
+            className="flex items-center space-x-2 px-4 py-2 rounded-full bg-[#F5F5F5] text-[#6B6B6B] hover:bg-[#EBEBEB] hover:text-[#D85D3F] transition-colors duration-200"
           >
             <span className="text-lg">💬</span>
             <span className="text-sm font-medium">Комментировать</span>

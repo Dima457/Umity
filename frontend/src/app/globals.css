@@ -2,21 +2,24 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #2D2D2D;
+  --accent: #D85D3F;
+  --accent-hover: #C24E32;
+  --secondary-bg: #F5F5F5;
+  --muted: #666666;
+  --border: #E5E5E5;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-secondary-bg: var(--secondary-bg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
@@ -24,7 +27,8 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
-/* Стили для скроллбара */
+
+/* Скроллбар в стиле сайта */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -39,5 +43,5 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: var(--accent);
 }

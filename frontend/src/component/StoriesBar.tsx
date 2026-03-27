@@ -47,16 +47,16 @@ export default function StoriesBar({ onStoryClick }: StoriesBarProps) {
   };
 
   return (
-    <div className="w-full bg-white border-b border-gray-200 py-4">
+    <div className="w-full bg-white border-b border-[#E5E5E5] py-4">
       <div className="flex gap-4 overflow-x-auto px-4 scrollbar-hide">
         {/* Кнопка "Добавить историю" */}
         <button 
         onClick={()=>setIsModalOpen(true)}
         className="flex flex-col items-center gap-1 flex-shrink-0">
-          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300">
-            <span className="text-2xl text-gray-400">+</span>
+          <div className="w-16 h-16 rounded-full bg-[#F5F5F5] flex items-center justify-center border-2 border-dashed border-[#D85D3F]">
+            <span className="text-2xl text-[#D85D3F]">+</span>
           </div>
-          <span className="text-xs text-gray-500">Добавить</span>
+          <span className="text-xs text-[#6B6B6B]">Добавить</span>
         </button>
 
         {/* Истории пользователей */}
@@ -68,7 +68,7 @@ export default function StoriesBar({ onStoryClick }: StoriesBarProps) {
               onClick={() => onStoryClick(userId, lastStory.user.username)}
               className="flex flex-col items-center gap-1 flex-shrink-0"
             >
-              <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500">
+              <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-[#D85D3F] via-[#E87A5F] to-[#F5A623]">
                 <div className="w-full h-full rounded-full bg-white p-[2px]">
                   <img
                     src={lastStory.user.avatar || '/default-avatar.png'}
@@ -77,7 +77,7 @@ export default function StoriesBar({ onStoryClick }: StoriesBarProps) {
                   />
                 </div>
               </div>
-              <span className="text-xs text-gray-700 truncate max-w-[64px]">
+              <span className="text-xs text-[#2D2D2D] truncate max-w-[64px]">
                 {lastStory.user.username}
               </span>
             </button>

@@ -230,100 +230,117 @@ const deletePost = async (postId: string) => {
   // Дальше идет return который не трогаем...
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow rounded-lg p-6">
-          {/* Заголовок профиля */}
-          <div className="flex flex-col md:flex-row items-center mb-8">
-            <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
-              <div className="h-24 w-24 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
-                {user?.avatar ? (
-                  <img src={user.avatar} alt="Аватар" className="h-full w-full object-cover" />
-                ) : (
-                  <span className="text-gray-600 text-2xl font-bold">
-                    {user?.username?.charAt(0).toUpperCase() || 'U'}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="text-center md:text-left">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {user?.username || 'Пользователь'}
-              </h1>
-              <p className="text-gray-600 mt-1">
-                {user?.bio || 'Нет описания профиля'}
-              </p>
-            </div>
+    <div className="min-h-screen bg-[#FDF8F6] py-8">
+  <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
+      {/* Заголовок профиля */}
+      <div className="flex flex-col md:flex-row items-center mb-8">
+        <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
+          <div className="h-24 w-24 rounded-full bg-gradient-to-br from-[#D85D3F] to-[#C24D32] flex items-center justify-center overflow-hidden shadow-md">
+            {user?.avatar ? (
+              <img src={user.avatar} alt="Аватар" className="h-full w-full object-cover" />
+            ) : (
+              <span className="text-white text-2xl font-bold">
+                {user?.username?.charAt(0).toUpperCase() || 'U'}
+              </span>
+            )}
           </div>
+        </div>
+        <div className="text-center md:text-left">
+          <h1 className="text-2xl font-bold text-gray-900">
+            {user?.username || 'Пользователь'}
+          </h1>
+          <p className="text-gray-600 mt-1">
+            {user?.bio || 'Нет описания профиля'}
+          </p>
+        </div>
+      </div>
 
-          {/* Поисковая строка */}
-          <div className="mb-8">
-            <SearchBar onSearch={handleSearch} />
-          </div>
+      {/* Поисковая строка */}
+      <div className="mb-8">
+        <SearchBar onSearch={handleSearch} />
+      </div>
 
-          {/* Контент для аутентифицированных пользователей */}
-          {isAuthenticated ? (
-            
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Мои посты</h2>
-              <div> 
-                <button 
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition"
+      {/* Контент для аутентифицированных пользователей */}
+      {isAuthenticated ? (
+        
+        <div>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+            <h2 className="text-xl font-semibold text-gray-900">Мои посты</h2>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button 
+                className="bg-[#D85D3F] hover:bg-[#C24D32] text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                 onClick={() => setIsPostOpen(true)}
               >
-                добавить пост
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                </svg>
+                Добавить пост
               </button>
-                <CreatePostModal 
+              <CreatePostModal 
                 isOpen={isPostOpen} 
-                onClose={()=>setIsPostOpen(false)}/>
-              </div>
-              <div>
-                <button 
-                      onClick={() => setIsEditModalOpen(true)}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg mt-4"
-                      >
-                       ✏️ Редактировать профиль
-                  </button>
+                onClose={()=>setIsPostOpen(false)}
+              />
+              
+              <button 
+                onClick={() => setIsEditModalOpen(true)}
+                className="bg-white border-2 border-[#D85D3F] text-[#D85D3F] hover:bg-[#D85D3F] hover:text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                </svg>
+                Редактировать профиль
+              </button>
 
-                    <EditProfileModal
-                           isOpen={isEditModalOpen}
-                          onClose={() => setIsEditModalOpen(false)}
-                          user={{bio:user?.bio, avatar:user?.avatar}}
-                          onSave={handleSaveProfile}
-                            />
-              </div>
-             
-              <div className="mt-4 p-4 bg-gray-50 rounded-md">
-                {filteredPosts.map(post=>(<PostCard 
+              <EditProfileModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                user={{bio:user?.bio, avatar:user?.avatar}}
+                onSave={handleSaveProfile}
+              />
+            </div>
+          </div>
+         
+          <div className="mt-4 p-4 bg-[#FDF8F6] rounded-xl border border-gray-100">
+            {filteredPosts.map(post => (
+              <PostCard 
                 key={post.id} 
                 post={post} 
                 showDeleteButton={true} 
-                onDelete={deletePost}  /> ))}
-                
-                                                                                                             
-              </div>
-            </div>
-          ) : (
-            // Контент для неаутентифицированных пользователей
-            <div className="text-center py-8">
-              <p className="text-gray-600 mb-6">Для просмотра профиля необходимо войти в систему</p>
-              <div className="space-y-3 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center"><button 
-                  onClick={() => router.push('/auth/register')}
-                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition"
-                >
-                  Зарегистрироваться
-                </button>
-                <button 
-                  onClick={() => router.push('/auth/login')}
-                  className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md transition"
-                >
-                  Войти
-                </button>
-              </div>
-            </div>
-          )}
+                onDelete={deletePost}  
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        // Контент для неаутентифицированных пользователей
+        <div className="text-center py-8">
+          <div className="mb-6">
+            <div className="mx-auto w-16 h-16 bg-[#FDF8F6] rounded-full flex items-center justify-center mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#D85D3F]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <p className="text-gray-600 mb-6">Для просмотра профиля необходимо войти в систему</p>
+          </div>
+          <div className="space-y-3 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
+            <button 
+              onClick={() => router.push('/auth/register')}
+              className="w-full sm:w-auto bg-[#D85D3F] hover:bg-[#C24D32] text-white font-medium py-2 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              Зарегистрироваться
+            </button>
+            <button 
+              onClick={() => router.push('/auth/login')}
+              className="w-full sm:w-auto bg-white border-2 border-[#D85D3F] text-[#D85D3F] hover:bg-[#D85D3F] hover:text-white font-medium py-2 px-6 rounded-lg transition-all duration-200"
+            >
+              Войти
+            </button>
+          </div>
+        </div>
+      )}
     </div>
+  </div>
+</div>
   );
   }
