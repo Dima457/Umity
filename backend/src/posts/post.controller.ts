@@ -3,7 +3,7 @@ import {Controller, Post, Get, Body,Request, Param, Delete } from "@nestjs/commo
  import { UseGuards } from "@nestjs/common";
  import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
  @Controller('posts')
- //@UseGuards(JwtAuthGuard)
+ 
  export class PostController{
     constructor(private postService:PostService){}
 

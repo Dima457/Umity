@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import CommentModal from './CommentModal';
 import { likesApI } from '@/lib/api';
+import { isMfcUser } from '../../mfc.config';
 
 export interface Post {
   id: string;
@@ -32,6 +33,8 @@ export default function PostCard({ post, onDelete, showDeleteButton = false, onU
   const [showDeleteBtn, setShowDeleteBtn] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likesCount);
   const [isLiked, setIsLiked] = useState(post.isLikedByMe);
+
+  const isMfcPost = isMfcUser(post.author.username);
 
   useEffect(() => {
     setLikesCount(post.likesCount);
@@ -71,7 +74,11 @@ export default function PostCard({ post, onDelete, showDeleteButton = false, onU
   };
 
   return (
-    <div className="group bg-white rounded-xl shadow-md border border-[#E5E5E5] overflow-hidden hover:shadow-lg hover:border-[#D85D3F]/30 transition-all duration-300 w-full max-w-md mx-auto relative">
+    <div className={`group bg-white rounded-xl shadow-md border overflow-hidden hover:shadow-lg transition-all duration-300 w-full max-w-md mx-auto relative ${
+      isMfcPost 
+        ? 'border-blue-400 border-l-4 shadow-blue-100 hover:shadow-blue-200' 
+        : 'border-[#E5E5E5] hover:border-[#D85D3F]/30'
+    }`}>
       
       {showDeleteButton && (
         <div 
@@ -100,7 +107,7 @@ export default function PostCard({ post, onDelete, showDeleteButton = false, onU
         />
       )}
       
-      <div className="p-6">
+      <div className={`p-6 ${isMfcPost ? 'bg-blue-50/30' : ''}`}>
         {post.title && (
           <h3 className="text-xl font-semibold text-[#2D2D2D] mb-3 line-clamp-2">
             {post.title}
@@ -125,15 +132,27 @@ export default function PostCard({ post, onDelete, showDeleteButton = false, onU
                 className="w-8 h-8 rounded-full object-cover ring-2 ring-[#E5E5E5]"
               />
             ) : (
-              <div className="w-8 h-8 bg-gradient-to-r from-[#D85D3F] to-[#E87A5F] rounded-full flex items-center justify-center">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                isMfcPost ? 'bg-blue-500' : 'bg-gradient-to-r from-[#D85D3F] to-[#E87A5F]'
+              }`}>
                 <span className="text-white text-sm font-medium">
                   {post.author.username.charAt(0).toUpperCase()}
                 </span>
               </div>
             )}
-            <span className="text-sm font-medium text-[#2D2D2D]">
-              @{post.author.username}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className={`text-sm font-medium ${isMfcPost ? 'text-blue-600' : 'text-[#2D2D2D]'}`}>
+                @{post.author.username}
+              </span>
+              {isMfcPost && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  МФЦ
+                </span>
+              )}
+            </div>
           </div>
           
           <span className="text-xs text-[#9B9B9B]">

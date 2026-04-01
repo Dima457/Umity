@@ -3,7 +3,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 @Injectable()
 export class PostService{
     constructor(private prisma:PrismaService){}
-    //*создание поста
+    
     async createPost(data:{
         title?:string,
         content?:string,

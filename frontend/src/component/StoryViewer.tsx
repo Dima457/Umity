@@ -1,7 +1,9 @@
+// components/StoryViewer.tsx
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
 import { storiesAPI } from '@/lib/api';
+import { isMfcUser } from '../../mfc.config';
 
 interface Story {
   id: string;
@@ -116,6 +118,7 @@ export default function StoryViewer({ userId, username, onClose }: StoryViewerPr
   }
 
   const currentStory = stories[currentIndex];
+  const isMfcStory = isMfcUser(currentStory.user?.username);
   
   // Защита от undefined
   if (!currentStory) {
@@ -130,7 +133,9 @@ export default function StoryViewer({ userId, username, onClose }: StoryViewerPr
         {stories.map((_, idx) => (
           <div key={idx} className="flex-1 h-1 bg-[#6B6B6B] rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#D85D3F] transition-all duration-100 ease-linear"
+              className={`h-full transition-all duration-100 ease-linear ${
+                isMfcStory && idx === currentIndex ? 'bg-blue-400' : 'bg-[#D85D3F]'
+              }`}
               style={{
                 width: idx < currentIndex ? '100%' : idx === currentIndex ? `${progress}%` : '0%'
               }}
@@ -145,9 +150,21 @@ export default function StoryViewer({ userId, username, onClose }: StoryViewerPr
           <img
             src={currentStory.user?.avatar || '/default-avatar.png'}
             alt={username}
-            className="w-8 h-8 rounded-full ring-2 ring-[#D85D3F]"
+            className={`w-8 h-8 rounded-full ring-2 ${isMfcStory ? 'ring-blue-400' : 'ring-[#D85D3F]'}`}
           />
-          <span className="font-semibold">{username}</span>
+          <div className="flex items-center gap-2">
+            <span className={`font-semibold ${isMfcStory ? 'text-blue-300' : 'text-white'}`}>
+              {username}
+            </span>
+            {isMfcStory && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500 text-white">
+                <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                МФЦ
+              </span>
+            )}
+          </div>
           <span className="text-[#B0B0B0] text-sm">
             {new Date(currentStory.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
